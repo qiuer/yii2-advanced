@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use app\models\Job;
 use yii\data\ActiveDataProvider;
+use yii\web\NotFoundHttpException;
 
 class JobController extends \yii\web\Controller
 {
@@ -50,11 +51,11 @@ class JobController extends \yii\web\Controller
                     'errors' => $errors
                 ]);
             }
-            return $this->redirect(['/job/view']);
+            return $this->redirect(['/job/list']);
         }
     }
 
-    public function actionView()
+    public function actionList()
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Job::find(),
@@ -62,9 +63,29 @@ class JobController extends \yii\web\Controller
                 'pageSize' => 15
             ]
         ]);
-        return $this->render('view', [
+        return $this->render('list', [
             'dataProvider' => $dataProvider
         ]);
+    }
+
+    public function actionView($id)
+    {
+        $model = $this->getModel($id);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['/job/list']);
+        }
+        return $this->render('view', [
+            'model' => $model
+        ]);
+    }
+
+    private function getModel($id)
+    {
+        if (($model = Job::findOne($id)) == null) {
+            throw new NotFoundHttpException ('The requested page does not exit.');
+        } else {
+            return $model;
+        }
     }
 
 }

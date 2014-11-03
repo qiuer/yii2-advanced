@@ -3,18 +3,7 @@
  * Created by PhpStorm.
  * User: qxm
  * Date: 14/11/3
- * Time: 下午3:58
+ * Time: 下午6:11
  */
 ?>
-<div>
-    <?= \yii\grid\GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => yii\grid\CheckboxColumn::className()],
-            'code',
-            'title',
-            'division',
-            ['class' => yii\grid\ActionColumn::className()]
-        ]
-    ])?>
-</div>
+<?= $this->render('_form', ['model' => $model])?>

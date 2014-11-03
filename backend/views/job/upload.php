@@ -22,13 +22,23 @@ use yii\helpers\Html;
             <td>用人司局</td>
         </tr>
         <?php foreach ($jobs as $key => $value) :?>
-            <tr>
+            <tr id="delete-<?= $key?>">
                 <td><?= $form->field($model, "[$key]code")->textInput(['value' => $value['code'] ]) ?></td>
                 <td><?= $form->field($model, "[$key]title")->textInput(['value' => $value['title']]) ?></td>
                 <td><?= $form->field($model, "[$key]division")->textInput(['value' => $value['division']])?></td>
+                <td><?= Html::button('删除', ['class' => 'job-delete btn btn-danger', 'data' => $key])?></td>
             </tr>
         <?php endforeach;?>
     </table>
     <?= Html::submitButton('确定提交', ['class' => 'btn btn-info'])?>
     <?php $form = \yii\widgets\ActiveForm::end()?>
 </div>
+<?php
+$js = <<<JavaScript
+$(".job-delete").click(function() {
+   var id = $(this).attr('data');
+   $("#delete-" + id).remove();
+});
+JavaScript;
+$this->registerJs($js, yii\web\View::POS_END);
+?>
