@@ -28,6 +28,17 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                "tencent" => [
+                    'class' => 'frontend\oauth\Tencent',
+                    'clientId' => '101022568',
+                    'clientSecret' => '91e88c514f193882f3975988c6fbbbd9',
+                ],
+            ]
+        ],
+
     ],
     'params' => $params,
 ];

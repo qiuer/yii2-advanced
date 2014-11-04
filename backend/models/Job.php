@@ -52,6 +52,7 @@ class Job extends \yii\db\ActiveRecord
     {
         $arr_jobs = [];
         $upload = UploadedFile::getInstanceByName($name);
+        $
         $name = date('Y-m-d') . '-' . rand(1, 5) . '-job.xls';
         if ($upload->saveAs($name)) {
             $objPHPExcel = \PHPExcel_IOFactory::load($name);

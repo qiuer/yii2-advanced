@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a0a040eb1346671fdfde0709d1b89c92",
+    "hash": "5de80380cb40a8f128ed5b318b3d13b5",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -102,16 +102,16 @@
         },
         {
             "name": "bower-asset/jquery.inputmask",
-            "version": "3.1.34",
+            "version": "3.1.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RobinHerbots/jquery.inputmask.git",
-                "reference": "f48d10463039a23469e65cc4b5c0b4409e8fb596"
+                "reference": "dc1039e8b08fee22aca2003c4559530ce111f947"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RobinHerbots/jquery.inputmask/zipball/f48d10463039a23469e65cc4b5c0b4409e8fb596",
-                "reference": "f48d10463039a23469e65cc4b5c0b4409e8fb596",
+                "url": "https://api.github.com/repos/RobinHerbots/jquery.inputmask/zipball/dc1039e8b08fee22aca2003c4559530ce111f947",
+                "reference": "dc1039e8b08fee22aca2003c4559530ce111f947",
                 "shasum": ""
             },
             "require": {
@@ -761,6 +761,54 @@
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
             "time": "2013-11-01 13:02:21"
+        },
+        {
+            "name": "yiisoft/yii2-authclient",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yiisoft/yii2-authclient.git",
+                "reference": "38d1bd9431fc3f778d869b0836ffa4c6d66d2382"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yiisoft/yii2-authclient/zipball/38d1bd9431fc3f778d869b0836ffa4c6d66d2382",
+                "reference": "38d1bd9431fc3f778d869b0836ffa4c6d66d2382",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "yii\\authclient\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Klimov",
+                    "email": "klimov.paul@gmail.com"
+                }
+            ],
+            "description": "External authentication via OAuth and OpenID for the Yii framework",
+            "keywords": [
+                "OpenId",
+                "auth",
+                "oauth",
+                "yii2"
+            ],
+            "time": "2014-10-12 17:09:06"
         },
         {
             "name": "yiisoft/yii2-codeception",

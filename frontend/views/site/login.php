@@ -27,6 +27,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
                 </div>
             <?php ActiveForm::end(); ?>
+            <?= \yii\authclient\widgets\AuthChoice::widget([
+               'baseAuthUrl' => ['/oauth/qq']
+            ])?>
         </div>
     </div>
 </div>
