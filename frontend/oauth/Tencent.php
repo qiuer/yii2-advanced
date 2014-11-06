@@ -46,12 +46,12 @@ class Tencent extends OAuth2
     protected function defaultTitle() {
         return 'QQ';
     }
-//    protected function defaultViewOptions() {
-//        return [
-//            'popupWidth' => 800,
-//            'popupHeight' => 500,
-//        ];
-//    }
+    protected function defaultViewOptions() {
+        return [
+            'popupWidth' => 800,
+            'popupHeight' => 500,
+        ];
+    }
     /**
      * Processes raw response converting it to actual data.
      * @param string $rawResponse raw response.
