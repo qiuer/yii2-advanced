@@ -31,5 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
                'baseAuthUrl' => ['/oauth/qq']
             ])?>
         </div>
+        <?= Html::a('微信', ['weixin/index'])?>
     </div>
 </div>

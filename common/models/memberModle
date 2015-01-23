@@ -1,0 +1,165 @@
+<?php
+
+namespace app\models;
+
+use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
+
+/**
+ * This is the model class for table "wx_members".
+ *
+ * @property integer $id
+ * @property string $member_id
+ * @property string $nickname
+ * @property string $token
+ * @property string $openid
+ * @property integer $sex
+ * @property string $city
+ * @property string $province
+ * @property string $country
+ * @property string $language
+ * @property string $headimgurl
+ * @property integer $subscribe_time
+ * @property string $mobile
+ * @property integer $status_code
+ * @property integer $status
+ * @property integer $created_at
+ * @property integer $updated_at
+ * @property integer $unsubscribe_time
+ * @property integer $cancellations
+ */
+class Member extends \yii\db\ActiveRecord implements IdentityInterface
+{
+    /**member信息导入时增加member_source字段，时间戳字段*/
+
+    const STATUS_FOLLOW = 1; //表示用户关注微信号
+    const STATUS_UNFOLLOW = 0; //表示用户取消关注微信号
+
+    public $authKey;
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'wx_members';
+    }
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['updated_at', 'created_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['member_id', 'nickname', 'openid', 'subscribe_time'], 'required'],
+            [['sex', 'subscribe_time', 'status_code', 'status', 'created_at', 'updated_at', 'unsubscribe_time', 'cancellations'], 'integer'],
+            [['member_id', 'birthday'], 'string', 'max' => 36],
+            [['nickname', 'token', 'openid', 'headimgurl'], 'string', 'max' => 255],
+            [['city', 'province', 'country'], 'string', 'max' => 100],
+            [['language'], 'string', 'max' => 50],
+            [['mobile'], 'string', 'max' => 32]
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'member_id' => '会员ID',
+            'nickname' => '昵称',
+            'token' => '公众号原始ID',
+            'openid' => 'Openid',
+            'sex' => '性别',
+            'city' => '城市',
+            'province' => '省份',
+            'country' => '国家',
+            'language' => '语言',
+            'headimgurl' => '头像链接',
+            'subscribe_time' => '首次关注时间',
+            'mobile' => '电话',
+            'status_code' => '记录状态',
+            'status' => '关注公众号状态',
+            'created_at' => '创建时间',
+            'updated_at' => '更新时间',
+            'unsubscribe_time' => '首次取消关注时间',
+            'cancellations' => '取消关注次数',
+            'birthday' => '生日',
+        ];
+    }
+
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return static::findOne(['access_token' => $token]);
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getAuthKey()
+    {
+        return $this->authKey;
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        return $this->authKey === $authKey;
+    }
+
+    public function unsubscribe($openid)
+    {
+        $model = self::findOne(['openid' => $openid]);
+        if (!empty($model)) {
+            $unsubscribe = new Unsubscribe();
+            $unsubscribe->openid = $openid;
+            $unsubscribe->user_id = $model->id;
+            $unsubscribe->save();
+
+            $model->status = self::STATUS_UNFOLLOW;
+            $model->cancellations = $model->cancellations + 1;
+            if (empty($model->unsubscribe_time))
+                $model->unsubscribe_time = time();
+            return $model->update();
+        }
+        return false;
+    }
+
+    public static function getMemberList()
+    {
+        $list[] = '';
+        $members = self::find()->all();
+        foreach ($members as $member) {
+            $list[$member->id] = $member->nickname;
+        }
+        return $list;
+    }
+
+    public function getInvoices()
+    {
+        return $this->hasMany(Invoice::className(), ['user_id' => 'id']);
+    }
+}
