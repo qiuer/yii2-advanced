@@ -44,6 +44,7 @@ AppAsset::register($this);
                 ];
             }
             $menuItems[] = ['label' => 'UploadExcel', 'url' => ['/job/index']];
+            $menuItems[] = ['label' => '第三方登陆', 'url' => ['/third-config/index']];
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'items' => $menuItems,

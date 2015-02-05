@@ -1,75 +1,93 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: qxm
- * Date: 14/11/4
- * Time: 下午1:20
- */
 
 namespace frontend\oauth;
 
-
 use yii\authclient\OAuth2;
+use Yii;
 
 class Tencent extends OAuth2
 {
+    /**
+     * @inheritdoc
+     */
     public $authUrl = 'https://graph.qq.com/oauth2.0/authorize';
+    /**
+     * @inheritdoc
+     */
     public $tokenUrl = 'https://graph.qq.com/oauth2.0/token';
+    /**
+     * @inheritdoc
+     */
     public $apiBaseUrl = 'https://graph.qq.com';
 
-    public function init() {
-        parent::init();
-        if ($this->scope === null) {
-            $this->scope = implode(',', [
-                'get_user_info',
-            ]);
-        }
-    }
-    protected function initUserAttributes() {
+    public $meUrl = 'https://graph.qq.com/oauth2.0/me?';
+
+    public $infoUrl = 'https://graph.qq.com/user/get_user_info?';
+
+    /**
+     * @inheritdoc
+     */
+    public $scope = 'get_user_info';
+
+    /**
+     * @inheritdoc
+     */
+    protected function initUserAttributes()
+    {
         return $this->api('oauth2.0/me', 'GET');
     }
+
+    public function processResponse($rawResponse, $contentType = self::CONTENT_TYPE_AUTO)
+    {
+        parse_str($rawResponse, $arr);
+        return $arr;
+    }
+
+    public function getInfo($openid)
+    {
+        $arr_info = array(
+            'access_token' => $this->getAccessToken()->getToken(),
+            'oauth_consumer_key' => $this->clientId,
+            'openid' => $openid
+        );
+        $str  = file_get_contents($this->infoUrl . http_build_query($arr_info));
+        $info = json_decode($str, true);
+        $info['openid'] = $openid;
+        return $info;
+    }
+
+    public function getOpenId($attributes)
+    {
+        if (strpos(key($attributes), "callback") !== false) {
+            $lpos = strpos(key($attributes), "(");
+            $rpos = strrpos(key($attributes), ")");
+            $str  = substr(key($attributes), $lpos + 2, $rpos - $lpos -3 );
+        }
+        $user = json_decode($str, true);
+        return $this->getInfo($user['openid']);
+    }
+
     /**
-     * get UserInfo
-     * @return []
-     * @see http://wiki.connect.qq.com/get_user_info
+     * @inheritdoc
      */
-    public function getUserInfo() {
-        $openid = $this->getUserAttributes();
-        return $this->api("user/get_user_info", 'GET', [
-            'oauth_consumer_key' => $openid['client_id'],
-            'openid' => $openid['openid']
-        ]);
+    protected function defaultName()
+    {
+        return 'tencent';
     }
-    protected function defaultName() {
-        return 'QQ';
+
+    /**
+     * @inheritdoc
+     */
+    protected function defaultTitle()
+    {
+        return 'QQ登陆';
     }
-    protected function defaultTitle() {
-        return 'QQ';
-    }
-    protected function defaultViewOptions() {
+
+    protected function defaultViewOptions()
+    {
         return [
-            'popupWidth' => 800,
+            'popupWidth' => 1000,
             'popupHeight' => 500,
         ];
-    }
-    /**
-     * Processes raw response converting it to actual data.
-     * @param string $rawResponse raw response.
-     * @param string $contentType response content type.
-     * @throws Exception on failure.
-     * @return array actual response.
-     */
-    protected function processResponse($rawResponse, $contentType = self::CONTENT_TYPE_AUTO) {
-        if ($contentType == self::CONTENT_TYPE_AUTO) {
-            //jsonp to json
-            if (strpos($rawResponse, "callback") === 0) {
-                $lpos = strpos($rawResponse, "(");
-                $rpos = strrpos($rawResponse, ")");
-                $rawResponse = substr($rawResponse, $lpos + 1, $rpos - $lpos - 1);
-                $rawResponse = trim($rawResponse);
-                $contentType = self::CONTENT_TYPE_JSON;
-            }
-        }
-        return parent::processResponse($rawResponse, $contentType);
     }
 }
